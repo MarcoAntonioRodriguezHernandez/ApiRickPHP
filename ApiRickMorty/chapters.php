@@ -25,11 +25,9 @@
 </table><br>
 
 <?php include 'templates/footer.blade.php'; ?>
-
-
-
 <?php
-function allEpisodes($data):void
+//Function that print episode by episode according to the data received
+function allEpisodes($data): void
 {
     foreach ($data as $episode) {
         echo '<article>';
@@ -37,13 +35,13 @@ function allEpisodes($data):void
         echo '<p><b>Nombre: </b>' . $episode['name'] . '</p>';
         echo '<p><b>Fecha de salida: </b>' . $episode['air_date'] . '</p>';
         echo '<p><b>Episodio: </b>' . $episode['episode'] . '</p>';
-        echo '<a href="showMoreChapter.php?id='.$episode['id'].'" type="button" class="btn btn-primary">Ver más</a>';
+        echo '<a href="showMoreChapter.php?id=' . $episode['id'] . '" type="button" class="btn btn-primary">Ver más</a>';
         echo '</div>';
         echo '</article>';
 
     }
 }
-
+//Function to get the number of all the episodes or all the episodes data
 function initial4($mode)
 {
     if ($mode === 1) {
@@ -61,8 +59,9 @@ function initial4($mode)
         }
         return $data['info']['count'];
     } else {
+        $max = initial4(1);
         $j = '';
-        for ($i = 1; $i < 52; $i++) {
+        for ($i = 1; $i < ($max + 1); $i++) {
             $j .= $i . ',';
         }
         $channel = curl_init();

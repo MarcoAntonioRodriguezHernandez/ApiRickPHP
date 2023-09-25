@@ -36,6 +36,7 @@ initial(1);
 <?php include 'templates/footer.blade.php'; ?>
 
 <?php
+//Function that print character by character according to the data received
 function allCharacters($data)
 {
 
@@ -46,17 +47,14 @@ function allCharacters($data)
         echo '<p><b>Nombre: </b>' . $character['name'] . '</p>';
         echo '<p><b>Estado: </b>' . $character['status'] . '</p>';
         echo '<p><b>Especie: </b>' . $character['species'] . '</p>';
-        echo '<a href="showMore.php?id='.$character['id'].'" type="button" class="btn btn-primary">Ver más</a>';
+        echo '<a href="showMore.php?id=' . $character['id'] . '" type="button" class="btn btn-primary">Ver más</a>';
         echo '</div>';
         echo '</article>';
-        echo "<script>
-                    document.getElementById('{$character['id']}').addEventListener('click', function() {
-                        window.location.href = `showMore.php?character={$character['id']}`;
-                    });
-                </script>";
+
     }
 }
 
+//Function that print random characters according to the data recovered
 function randomCharacters()
 {
     for ($j = 0; $j < 5;) {
@@ -67,13 +65,14 @@ function randomCharacters()
         echo '<p><b>Nombre: </b>' . $randomCharacter['name'] . '</p>';
         echo '<p><b>Estado: </b>' . $randomCharacter['status'] . '</p>';
         echo '<p><b>Especie: </b>' . $randomCharacter['species'] . '</p>';
+        echo '<a href="showMore.php?id=' . $randomCharacter['id'] . '" type="button" class="btn btn-primary">Ver más</a>';
         echo '</div>';
         echo '</article>';
         $j++;
     }
 }
 
-
+//Function that returns the number of pages or the data of all the characters
 function initial($mode)
 {
     if ($mode === 1) {
@@ -91,8 +90,9 @@ function initial($mode)
         }
         return $data['info']['pages'];
     } else {
+        $max = numberCharacters(0, 0);
         $j = '';
-        for ($i = 1; $i < 827; $i++) {
+        for ($i = 1; $i < ($max+1); $i++) {
             $j .= $i . ',';
         }
         $channel = curl_init();
@@ -111,6 +111,7 @@ function initial($mode)
     }
 }
 
+//Function that returns the number of characters or the data of a character
 function numberCharacters($mode, $random)
 {
     if ($mode === 0) {

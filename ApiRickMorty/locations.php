@@ -1,4 +1,5 @@
 <?php include 'templates/header.blade.php';
+$max = initial3(1, 0);
 ?>
 <a href="organized.php">
     <button class="btn btn-warning">Organizar</button>
@@ -15,7 +16,7 @@
         <td>
             <main>
                 <?php
-                allLocations(initial3(2));
+                allLocations(initial3(2, $max));
                 ?>
             </main>
         </td>
@@ -27,6 +28,7 @@
 <?php include 'templates/footer.blade.php'; ?>
 
 <?php
+//Function that print location by location according to the data received
 function allLocations($data)
 {
     foreach ($data as $location) {
@@ -35,12 +37,14 @@ function allLocations($data)
         echo '<p><b>Nombre: </b>' . $location['name'] . '</p>';
         echo '<p><b>Estado: </b>' . $location['type'] . '</p>';
         echo '<p><b>Especie: </b>' . $location['dimension'] . '</p>';
-        echo '<a href="showMoreLocation.php?id='.$location['id'].'" type="button" class="btn btn-primary">Ver más</a>';
+        echo '<a href="showMoreLocation.php?id=' . $location['id'] . '" type="button" class="btn btn-primary">Ver más</a>';
         echo '</div>';
         echo '</article>';
     }
 }
-function initial3($mode)
+
+//Function to get the number of all the locations or all the locations data
+function initial3($mode, $max)
 {
     if ($mode === 1) {
         $channel = curl_init();
@@ -58,7 +62,7 @@ function initial3($mode)
         return $data['info']['count'];
     } else {
         $j = '';
-        for ($i = 1; $i < 127; $i++) {
+        for ($i = 1; $i < ($max + 1); $i++) {
             $j .= $i . ',';
         }
         $channel = curl_init();
@@ -73,29 +77,6 @@ function initial3($mode)
             curl_close($channel);
             $data = json_decode($response, true);
         }
-        return $data;
-    }
-}
-
-function numberCharacters($mode, $random)
-{
-    if ($mode === 0) {
-        $channel = curl_init();
-        $url = "https://rickandmortyapi.com/api/character";
-        curl_setopt($channel, CURLOPT_URL, $url);
-        curl_setopt($channel, CURLOPT_RETURNTRANSFER, true);
-        $response = curl_exec($channel);
-        curl_close($channel);
-        $data = json_decode($response, true);
-        return $data['info']['count'];
-    } else {
-        $channel = curl_init();
-        $url = "https://rickandmortyapi.com/api/character/$random";
-        curl_setopt($channel, CURLOPT_URL, $url);
-        curl_setopt($channel, CURLOPT_RETURNTRANSFER, true);
-        $response = curl_exec($channel);
-        curl_close($channel);
-        $data = json_decode($response, true);
         return $data;
     }
 }

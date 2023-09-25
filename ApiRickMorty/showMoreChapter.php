@@ -26,7 +26,7 @@
 </a><br>
 
 <?php include 'templates/footer.blade.php';
-
+//Function that gets the data of the episode or the characters of the episode or the data of the character
 function getEpisodes($mode,$idChar)
 {
     if ($mode === 1) {
@@ -75,7 +75,7 @@ function getEpisodes($mode,$idChar)
         return $data;
     }
 }
-
+//Function that gets the id of the characters
 function charactersId($data)
 {
     $characters = "";
@@ -85,7 +85,7 @@ function charactersId($data)
     }
     return $characters;
 }
-
+//Function that prints the characters according to the data received
 function separateCharacterss($characters)
 {
     $characters = getEpisodes(3,$characters);
@@ -100,7 +100,7 @@ function separateCharacterss($characters)
         echo '</article>';
     }
 }
-
+//Function that prints the data of an episode
 function episodeData($data)
 {
     echo '<article>';

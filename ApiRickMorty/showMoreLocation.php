@@ -1,6 +1,6 @@
 <?php include 'templates/header.blade.php'; ?>
 
-<?php locationData(getLocations(1,0)) ?>
+<?php locationData(getLocations(1, 0)) ?>
 <div class="residents">
     <h3>Residentes</h3>
     <table class="tableContainer">
@@ -10,10 +10,10 @@
                 <main>
 
                     <?php
-                    if(residentsId(getLocations(2,0)) == "" ){
+                    if (residentsId(getLocations(2, 0)) == "") {
                         echo '<p>No hay residentes en esta locación</p>';
-                    }else{
-                        separateResidents(residentsId(getLocations(2,0)));
+                    } else {
+                        separateResidents(residentsId(getLocations(2, 0)));
                     }
                     ?>
                 </main>
@@ -29,55 +29,56 @@
 <?php include 'templates/footer.blade.php'; ?>
 
 <?php
-function getLocations($mode,$idChar)
+//Function that gets the data of the location or the residents of the location
+function getLocations($mode, $idChar)
 {
-if ($mode === 1) {
-    $channel = curl_init();
-    $id = $_GET['id'];
-    $url = "https://rickandmortyapi.com/api/location/$id";
-    curl_setopt($channel, CURLOPT_URL, $url);
-    curl_setopt($channel, CURLOPT_RETURNTRANSFER, true);
-    $response = curl_exec($channel);
-    if (curl_errno($channel)) {
-        $msg = curl_error($channel);
-        echo 'Error al conectarse: ' . curl_error($channel);
+    if ($mode === 1) {
+        $channel = curl_init();
+        $id = $_GET['id'];
+        $url = "https://rickandmortyapi.com/api/location/$id";
+        curl_setopt($channel, CURLOPT_URL, $url);
+        curl_setopt($channel, CURLOPT_RETURNTRANSFER, true);
+        $response = curl_exec($channel);
+        if (curl_errno($channel)) {
+            $msg = curl_error($channel);
+            echo 'Error al conectarse: ' . curl_error($channel);
+        } else {
+            curl_close($channel);
+            $data = json_decode($response, true);
+        }
+        return $data;
+    } else if ($mode === 2) {
+        $channel = curl_init();
+        $id = $_GET['id'];
+        $url = "https://rickandmortyapi.com/api/location/$id";
+        curl_setopt($channel, CURLOPT_URL, $url);
+        curl_setopt($channel, CURLOPT_RETURNTRANSFER, true);
+        $response = curl_exec($channel);
+        if (curl_errno($channel)) {
+            $msg = curl_error($channel);
+            echo 'Error al conectarse: ' . curl_error($channel);
+        } else {
+            curl_close($channel);
+            $data = json_decode($response, true);
+        }
+        return $data['residents'];
     } else {
-        curl_close($channel);
-        $data = json_decode($response, true);
+        $channel = curl_init();
+        $url = "https://rickandmortyapi.com/api/character/$idChar";
+        curl_setopt($channel, CURLOPT_URL, $url);
+        curl_setopt($channel, CURLOPT_RETURNTRANSFER, true);
+        $response = curl_exec($channel);
+        if (curl_errno($channel)) {
+            $msg = curl_error($channel);
+            echo 'Error al conectarse: ' . curl_error($channel);
+        } else {
+            curl_close($channel);
+            $data = json_decode($response, true);
+        }
+        return $data;
     }
-    return $data;
-}else if($mode === 2){
-    $channel = curl_init();
-    $id = $_GET['id'];
-    $url = "https://rickandmortyapi.com/api/location/$id";
-    curl_setopt($channel, CURLOPT_URL, $url);
-    curl_setopt($channel, CURLOPT_RETURNTRANSFER, true);
-    $response = curl_exec($channel);
-    if (curl_errno($channel)) {
-        $msg = curl_error($channel);
-        echo 'Error al conectarse: ' . curl_error($channel);
-    } else {
-        curl_close($channel);
-        $data = json_decode($response, true);
-    }
-    return $data['residents'];
-}else{
-    $channel = curl_init();
-    $url = "https://rickandmortyapi.com/api/character/$idChar";
-    curl_setopt($channel, CURLOPT_URL, $url);
-    curl_setopt($channel, CURLOPT_RETURNTRANSFER, true);
-    $response = curl_exec($channel);
-    if (curl_errno($channel)) {
-        $msg = curl_error($channel);
-        echo 'Error al conectarse: ' . curl_error($channel);
-    } else {
-        curl_close($channel);
-        $data = json_decode($response, true);
-    }
-    return $data;
 }
-}
-
+//Function that gets the id of the residents of the location
 function residentsId($data): string
 {
     $residents = "";
@@ -87,10 +88,10 @@ function residentsId($data): string
     }
     return $residents;
 }
-
+//Function that prints the residents of the location
 function separateResidents($residents)
 {
-    $residents = getLocations(3,$residents);
+    $residents = getLocations(3, $residents);
     foreach ($residents as $resident) {
         echo '<article>';
         echo '<div class="card">';
@@ -102,7 +103,7 @@ function separateResidents($residents)
         echo '</article>';
     }
 }
-
+//Function that prints the data of the location
 function locationData($data)
 {
     echo '<article>';

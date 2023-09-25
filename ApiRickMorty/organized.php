@@ -16,7 +16,7 @@
     </thead>
 </table><br>
 <?php include 'templates/footer.blade.php';
-
+//Function to get all the pages or all the characters
 function initial2($mode)
 {
     if ($mode === 1) {
@@ -54,7 +54,7 @@ function initial2($mode)
         return $data;
     }
 }
-
+//Function that print character by character according to the data received in alphabetical order
 function printCharacters($data)
 {
     foreach ($data as $character) {
@@ -67,11 +67,6 @@ function printCharacters($data)
         echo '<a href="showMore.php?id='.$character['id'].'" type="button" class="btn btn-primary">Ver más</a>';
         echo '</div>';
         echo '</article>';
-        echo "<script>
-                    document.getElementById('{$character['id']}').addEventListener('click', function() {
-                        window.location.href = `showMore.php?character={$character['id']}`;
-                    });
-                </script>";
     }
 }
 

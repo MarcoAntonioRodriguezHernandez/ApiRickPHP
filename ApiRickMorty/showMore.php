@@ -9,12 +9,11 @@
     </a>
 </div><br>
 
-<?php include 'templates/footer.blade.php';
-?>
+<?php include 'templates/footer.blade.php'; ?>
 <?php
-function getCharacters($mode, $idChar)
+//Function that obtains all the characters
+function getCharacters()
 {
-    if ($mode === 1) {
         $channel = curl_init();
         $id = $_GET['id'];
         $url = "https://rickandmortyapi.com/api/character/$id";
@@ -29,9 +28,9 @@ function getCharacters($mode, $idChar)
             $data = json_decode($response, true);
         }
         return $data;
-    }
 }
 
+//Function that prints the data of a character selected by the user
 function characterData($data)
 {
     echo '<article>';
