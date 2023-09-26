@@ -1,21 +1,19 @@
-<?php include 'templates/header.blade.php';
-?>
-<a href="organized.php">
-    <button class="btn btn-warning">Organizar</button>
-</a><br>
-<a href="locations.php">
-    <button class="btn btn-warning">Locaciones</button>
-</a><br>
-<a href="index.php">
-    <button class="btn btn-warning">Regresar</button>
-</a><br>
+<?php include 'templates/header.php'; ?>
+<div class="buttonsContainer">
+    <a href="locations.php" class="redirections">
+        <button class="btn btn-warning">Locaciones</button>
+    </a><br>
+    <a href="index.php" class="redirections">
+        <button class="btn btn-warning">Inicio</button>
+    </a><br>
+</div>
 <table class="tableContainer">
     <thead>
     <tr>
         <td>
             <main>
                 <?php
-                allEpisodes(initial4(2));
+                printAllEpisodes(getAllEpisodes());
                 ?>
             </main>
         </td>
@@ -24,10 +22,13 @@
     </thead>
 </table><br>
 
-<?php include 'templates/footer.blade.php'; ?>
+<?php include 'templates/footer.php'; ?>
 <?php
-//Function that print episode by episode according to the data received
-function allEpisodes($data): void
+/**
+ * Function to print all the episodes
+ * @return void Even though this function doesn't return anything, it prints the episodes with the echo's
+ */
+function printAllEpisodes($data): void
 {
     foreach ($data as $episode) {
         echo '<article>';
@@ -41,43 +42,46 @@ function allEpisodes($data): void
 
     }
 }
-//Function to get the number of all the episodes or all the episodes data
-function initial4($mode)
+
+/**
+ * Function to get the number of all the episodes
+ * @return int This variable contains the total number of episodes
+ */
+function getNumberEpisodes(): int
 {
-    if ($mode === 1) {
-        $channel = curl_init();
-        $url = "https://rickandmortyapi.com/api/episode";
-        curl_setopt($channel, CURLOPT_URL, $url);
-        curl_setopt($channel, CURLOPT_RETURNTRANSFER, true);
-        $response = curl_exec($channel);
-        if (curl_errno($channel)) {
-            $msg = curl_error($channel);
-            echo 'Error al conectarse: ' . curl_error($channel);
-        } else {
-            curl_close($channel);
-            $data = json_decode($response, true);
-        }
-        return $data['info']['count'];
-    } else {
-        $max = initial4(1);
-        $j = '';
-        for ($i = 1; $i < ($max + 1); $i++) {
-            $j .= $i . ',';
-        }
-        $channel = curl_init();
-        $url = "https://rickandmortyapi.com/api/episode/$j";
-        curl_setopt($channel, CURLOPT_URL, $url);
-        curl_setopt($channel, CURLOPT_RETURNTRANSFER, true);
-        $response = curl_exec($channel);
-        if (curl_errno($channel)) {
-            $msg = curl_error($channel);
-            echo 'Error al conectarse: ' . curl_error($channel);
-        } else {
-            curl_close($channel);
-            $data = json_decode($response, true);
-        }
-        return $data;
+    $channel = curl_init();
+    $url = "https://rickandmortyapi.com/api/episode";
+    $data = json_decode(setConectionAPI($url, $channel), true);
+    return $data['info']['count'];
+}
+
+/**
+ * Function to get all the episodes in only one query
+ * @return array This array contains all the data of the episodes from the query
+ */
+function getAllEpisodes(): array
+{
+    $max = getNumberEpisodes() + 1; //This variable contains the number of episodes
+    $j = '';
+    for ($i = 1; $i < $max; $i++) {
+        $j .= $i . ',';
     }
+    $channel = curl_init();
+    $url = "https://rickandmortyapi.com/api/episode/$j";
+    return json_decode(setConectionAPI($url, $channel), true);
+}
+
+/**
+ * Function to set the connection with the API
+ * @return string This variable contains the response of the API
+ */
+function setConectionAPI($url, $channel): string
+{
+    curl_setopt($channel, CURLOPT_URL, $url);
+    curl_setopt($channel, CURLOPT_RETURNTRANSFER, true);
+    $response = curl_exec($channel);
+    curl_close($channel);
+    return $response;
 }
 
 ?>

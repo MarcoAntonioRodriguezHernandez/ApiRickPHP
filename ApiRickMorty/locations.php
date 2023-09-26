@@ -1,22 +1,20 @@
-<?php include 'templates/header.blade.php';
-$max = initial3(1, 0);
-?>
-<a href="organized.php">
-    <button class="btn btn-warning">Organizar</button>
-</a><br>
-<a href="chapters.php">
-    <button class="btn btn-warning">Capitulos</button>
-</a><br>
-<a href="index.php">
-    <button class="btn btn-warning">Regresar</button>
-</a><br>
+<?php include 'templates/header.php'; ?>
+<div class="buttonsContainer">
+
+    <a href="chapters.php" class="redirections">
+        <button class="btn btn-warning">Capitulos</button>
+    </a><br>
+    <a href="index.php" class="redirections">
+        <button class="btn btn-warning">Inicio</button>
+    </a><br>
+</div>
 <table class="tableContainer">
     <thead>
     <tr>
         <td>
             <main>
                 <?php
-                allLocations(initial3(2, $max));
+                printAllLocations(getAllLocations());
                 ?>
             </main>
         </td>
@@ -25,11 +23,12 @@ $max = initial3(1, 0);
     </thead>
 </table><br>
 
-<?php include 'templates/footer.blade.php'; ?>
-
-<?php
-//Function that print location by location according to the data received
-function allLocations($data)
+<?php include 'templates/footer.php';
+/**
+ * Function to set the connection with the API
+ * @return void Even though this function doesn't return anything, it prints the locations with the echo's
+ */
+function printAllLocations($data): void
 {
     foreach ($data as $location) {
         echo '<article>';
@@ -43,42 +42,45 @@ function allLocations($data)
     }
 }
 
-//Function to get the number of all the locations or all the locations data
-function initial3($mode, $max)
+/**
+ * Function to get the number of all the locations
+ * @return int This variable contains the total number of locations
+ */
+function getNumberOfLocations(): int
 {
-    if ($mode === 1) {
-        $channel = curl_init();
-        $url = "https://rickandmortyapi.com/api/location";
-        curl_setopt($channel, CURLOPT_URL, $url);
-        curl_setopt($channel, CURLOPT_RETURNTRANSFER, true);
-        $response = curl_exec($channel);
-        if (curl_errno($channel)) {
-            $msg = curl_error($channel);
-            echo 'Error al conectarse: ' . curl_error($channel);
-        } else {
-            curl_close($channel);
-            $data = json_decode($response, true);
-        }
-        return $data['info']['count'];
-    } else {
-        $j = '';
-        for ($i = 1; $i < ($max + 1); $i++) {
-            $j .= $i . ',';
-        }
-        $channel = curl_init();
-        $url = "https://rickandmortyapi.com/api/location/$j";
-        curl_setopt($channel, CURLOPT_URL, $url);
-        curl_setopt($channel, CURLOPT_RETURNTRANSFER, true);
-        $response = curl_exec($channel);
-        if (curl_errno($channel)) {
-            $msg = curl_error($channel);
-            echo 'Error al conectarse: ' . curl_error($channel);
-        } else {
-            curl_close($channel);
-            $data = json_decode($response, true);
-        }
-        return $data;
+    $channel = curl_init();
+    $url = "https://rickandmortyapi.com/api/location";
+    $data = json_decode(setConectionAPI($url, $channel), true);
+    return $data['info']['count'];
+}
+
+/**
+ * Function to get all the locations in only one query
+ * @return array This array contains all the data of the locations from the query
+ */
+function getAllLocations(): array
+{
+    $max = getNumberOfLocations() + 1; //This variable contains the number of locations
+    $j = '';
+    for ($i = 1; $i < ($max + 1); $i++) {
+        $j .= $i . ',';
     }
+    $channel = curl_init();
+    $url = "https://rickandmortyapi.com/api/location/$j";
+    return json_decode(setConectionAPI($url, $channel), true);
+}
+
+/**
+ * Function to set the connection with the API
+ * @return string This variable contains the response of the API
+ */
+function setConectionAPI($url, $channel): string
+{
+    curl_setopt($channel, CURLOPT_URL, $url);
+    curl_setopt($channel, CURLOPT_RETURNTRANSFER, true);
+    $response = curl_exec($channel);
+    curl_close($channel);
+    return $response;
 }
 
 ?>

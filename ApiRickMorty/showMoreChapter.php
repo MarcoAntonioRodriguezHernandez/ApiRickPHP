@@ -1,6 +1,6 @@
-<?php include 'templates/header.blade.php'; ?>
+<?php include 'templates/header.php'; ?>
 
-<?php episodeData(getEpisodes(1,0)) ?>
+<?php printEpisodeData(getSingleEpisode()) ?>
 <div class="residents">
     <h3>Personajes del capítulo</h3>
     <table class="tableContainer">
@@ -9,10 +9,10 @@
             <td>
                 <main>
                     <?php
-                    if(charactersId(getEpisodes(2,0)) == "" ){
+                    if (getCharactersId(getSingleEpisode(2, 0)) == "") {
                         echo '<p>No hay personajes en este episodio</p>';
-                    }else{
-                        separateCharacterss(charactersId(getEpisodes(2,0)));
+                    } else {
+                        printAllCharacters(getCharactersId(getCharacterOfEpisode(2, 0)));
                     }
                     ?>
                 </main>
@@ -25,58 +25,48 @@
     <button class="btn btn-primary">Regresar</button>
 </a><br>
 
-<?php include 'templates/footer.blade.php';
-//Function that gets the data of the episode or the characters of the episode or the data of the character
-function getEpisodes($mode,$idChar)
+<?php include 'templates/footer.php';
+/**
+ * Function to get the data of one single episode
+ * @return array This array contains all the data of the episode from the query
+ */
+function getSingleEpisode(): array
 {
-    if ($mode === 1) {
-        $channel = curl_init();
-        $id = $_GET['id'];
-        $url = "https://rickandmortyapi.com/api/episode/$id";
-        curl_setopt($channel, CURLOPT_URL, $url);
-        curl_setopt($channel, CURLOPT_RETURNTRANSFER, true);
-        $response = curl_exec($channel);
-        if (curl_errno($channel)) {
-            $msg = curl_error($channel);
-            echo 'Error al conectarse: ' . curl_error($channel);
-        } else {
-            curl_close($channel);
-            $data = json_decode($response, true);
-        }
-        return $data;
-    }else if($mode === 2){
-        $channel = curl_init();
-        $id = $_GET['id'];
-        $url = "https://rickandmortyapi.com/api/episode/$id";
-        curl_setopt($channel, CURLOPT_URL, $url);
-        curl_setopt($channel, CURLOPT_RETURNTRANSFER, true);
-        $response = curl_exec($channel);
-        if (curl_errno($channel)) {
-            $msg = curl_error($channel);
-            echo 'Error al conectarse: ' . curl_error($channel);
-        } else {
-            curl_close($channel);
-            $data = json_decode($response, true);
-        }
-        return $data['characters'];
-    }else{
-        $channel = curl_init();
-        $url = "https://rickandmortyapi.com/api/character/$idChar";
-        curl_setopt($channel, CURLOPT_URL, $url);
-        curl_setopt($channel, CURLOPT_RETURNTRANSFER, true);
-        $response = curl_exec($channel);
-        if (curl_errno($channel)) {
-            $msg = curl_error($channel);
-            echo 'Error al conectarse: ' . curl_error($channel);
-        } else {
-            curl_close($channel);
-            $data = json_decode($response, true);
-        }
-        return $data;
-    }
+    $channel = curl_init();
+    $id = $_GET['id'];
+    $url = "https://rickandmortyapi.com/api/episode/$id";
+    return json_decode(setConectionAPI($url, $channel), true);
 }
-//Function that gets the id of the characters
-function charactersId($data)
+
+/**
+ * Function to get the characters of the episode
+ * @return array This array contains all the characters of the episode from the query
+ */
+function getCharacterOfEpisode(): array
+{
+    $channel = curl_init();
+    $id = $_GET['id'];
+    $url = "https://rickandmortyapi.com/api/episode/$id";
+    $data = json_decode(setConectionAPI($url, $channel), true);
+    return $data['characters'];
+}
+
+/**
+ * Function to get all the characters of the episode in only one query
+ * @return array This array contains all the data characters from the query
+ */
+function getCharacters($id): array
+{
+    $channel = curl_init();
+    $url = "https://rickandmortyapi.com/api/character/$id";
+    return json_decode(setConectionAPI($url, $channel), true);
+}
+
+/**
+ * Function to get all the id's of the characters in one string
+ * @return string This string contains all the id's of the characters
+ */
+function getCharactersId($data): string
 {
     $characters = "";
     for ($i = 0; $i < count($data); $i++) {
@@ -85,10 +75,14 @@ function charactersId($data)
     }
     return $characters;
 }
-//Function that prints the characters according to the data received
-function separateCharacterss($characters)
+
+/**
+ * Function to print all the characters of the episode
+ * @return void Even though this function doesn't return anything, it prints the characters of the episode with the echo's
+ */
+function printAllCharacters($characters): void
 {
-    $characters = getEpisodes(3,$characters);
+    $characters = getCharacters($characters);
     foreach ($characters as $character) {
         echo '<article>';
         echo '<div class="card">';
@@ -96,12 +90,17 @@ function separateCharacterss($characters)
         echo '<p><b>Nombre: </b>' . $character['name'] . '</p>';
         echo '<p><b>Estado: </b>' . $character['status'] . '</p>';
         echo '<p><b>Especie: </b>' . $character['species'] . '</p>';
+        echo '<a href="showMoreCharacter.php?id=' . $character['id'] . '" type="button" class="btn btn-primary">Ver más</a>';
         echo '</div>';
         echo '</article>';
     }
 }
-//Function that prints the data of an episode
-function episodeData($data)
+
+/**
+ * Function to print the data of the episode
+ * @return void Even though this function doesn't return anything, it prints the data of the episode with the echo's
+ */
+function printEpisodeData($data): void
 {
     echo '<article>';
     echo '<div class="card">';
@@ -110,6 +109,19 @@ function episodeData($data)
     echo '<p><b>Episodio: </b>' . $data['episode'] . '</p>';
     echo '</div>';
     echo '</article>';
+}
+
+/**
+ * Function to set the connection with the API
+ * @return string This variable contains the response of the API
+ */
+function setConectionAPI($url, $channel): string
+{
+    curl_setopt($channel, CURLOPT_URL, $url);
+    curl_setopt($channel, CURLOPT_RETURNTRANSFER, true);
+    $response = curl_exec($channel);
+    curl_close($channel);
+    return $response;
 }
 
 ?>

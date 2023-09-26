@@ -1,6 +1,6 @@
-<?php include 'templates/header.blade.php'; ?>
-
-<?php locationData(getLocations(1, 0)) ?>
+<?php include 'templates/header.php';
+printLocationData(getSingleLocation())//Function that prints the data of the location
+?>
 <div class="residents">
     <h3>Residentes</h3>
     <table class="tableContainer">
@@ -10,10 +10,10 @@
                 <main>
 
                     <?php
-                    if (residentsId(getLocations(2, 0)) == "") {
+                    if (getResidentsIds(getAllResidents()) == "") {
                         echo '<p>No hay residentes en esta locación</p>';
                     } else {
-                        separateResidents(residentsId(getLocations(2, 0)));
+                        printResidents(getResidentsIds(getAllResidents()));
                     }
                     ?>
                 </main>
@@ -26,60 +26,50 @@
     <button class="btn btn-primary">Regresar</button>
 </a><br>
 
-<?php include 'templates/footer.blade.php'; ?>
+<?php include 'templates/footer.php'; ?>
 
 <?php
-//Function that gets the data of the location or the residents of the location
-function getLocations($mode, $idChar)
+/**
+ * Function to get the data of one single location
+ * @return array This array contains all the data of the location from the query
+ */
+function getSingleLocation(): array
 {
-    if ($mode === 1) {
-        $channel = curl_init();
-        $id = $_GET['id'];
-        $url = "https://rickandmortyapi.com/api/location/$id";
-        curl_setopt($channel, CURLOPT_URL, $url);
-        curl_setopt($channel, CURLOPT_RETURNTRANSFER, true);
-        $response = curl_exec($channel);
-        if (curl_errno($channel)) {
-            $msg = curl_error($channel);
-            echo 'Error al conectarse: ' . curl_error($channel);
-        } else {
-            curl_close($channel);
-            $data = json_decode($response, true);
-        }
-        return $data;
-    } else if ($mode === 2) {
-        $channel = curl_init();
-        $id = $_GET['id'];
-        $url = "https://rickandmortyapi.com/api/location/$id";
-        curl_setopt($channel, CURLOPT_URL, $url);
-        curl_setopt($channel, CURLOPT_RETURNTRANSFER, true);
-        $response = curl_exec($channel);
-        if (curl_errno($channel)) {
-            $msg = curl_error($channel);
-            echo 'Error al conectarse: ' . curl_error($channel);
-        } else {
-            curl_close($channel);
-            $data = json_decode($response, true);
-        }
-        return $data['residents'];
-    } else {
-        $channel = curl_init();
-        $url = "https://rickandmortyapi.com/api/character/$idChar";
-        curl_setopt($channel, CURLOPT_URL, $url);
-        curl_setopt($channel, CURLOPT_RETURNTRANSFER, true);
-        $response = curl_exec($channel);
-        if (curl_errno($channel)) {
-            $msg = curl_error($channel);
-            echo 'Error al conectarse: ' . curl_error($channel);
-        } else {
-            curl_close($channel);
-            $data = json_decode($response, true);
-        }
-        return $data;
-    }
+    $channel = curl_init();
+    $id = $_GET['id'];
+    $url = "https://rickandmortyapi.com/api/location/$id";
+    return json_decode(setConectionAPI($url, $channel), true);
 }
-//Function that gets the id of the residents of the location
-function residentsId($data): string
+
+/**
+ * Function to get all the residents of the location
+ * @return array This array contains all the data of the residents from the location
+ */
+function getAllResidents(): array
+{
+    $channel = curl_init();
+    $id = $_GET['id'];
+    $url = "https://rickandmortyapi.com/api/location/$id";
+    $data = json_decode(setConectionAPI($url, $channel), true);
+    return $data['residents'];
+}
+
+/**
+ * Function to get all the characters of the location in only one query
+ * @return array This array contains all the data of the characters from the location
+ */
+function getAllCharacters($id): array
+{
+    $channel = curl_init();
+    $url = "https://rickandmortyapi.com/api/character/$id";
+    return json_decode(setConectionAPI($url, $channel), true);
+}
+
+/**
+ * Function to get the ids of all the residents of the location in one string
+ * @return string This string contains all the ids of the residents of the location
+ */
+function getResidentsIds($data): string
 {
     $residents = "";
     for ($i = 0; $i < count($data); $i++) {
@@ -88,10 +78,14 @@ function residentsId($data): string
     }
     return $residents;
 }
-//Function that prints the residents of the location
-function separateResidents($residents)
+
+/**
+ * Function to print all the residents of the location
+ * @return void Even though this function doesn't return anything, it prints the residents with the echo's
+ */
+function printResidents($characters): void
 {
-    $residents = getLocations(3, $residents);
+    $residents = getAllCharacters($characters);
     foreach ($residents as $resident) {
         echo '<article>';
         echo '<div class="card">';
@@ -99,12 +93,17 @@ function separateResidents($residents)
         echo '<p><b>Nombre: </b>' . $resident['name'] . '</p>';
         echo '<p><b>Estado: </b>' . $resident['status'] . '</p>';
         echo '<p><b>Especie: </b>' . $resident['species'] . '</p>';
+        echo '<a href="showMoreCharacter.php?id=' . $resident['id'] . '" type="button" class="btn btn-primary">Ver más</a>';
         echo '</div>';
         echo '</article>';
     }
 }
-//Function that prints the data of the location
-function locationData($data)
+
+/**
+ * Function to print the data of the location
+ * @return void Even though this function doesn't return anything, it prints the data of the location with the echo's
+ */
+function printLocationData($data): void
 {
     echo '<article>';
     echo '<div class="card">';
@@ -113,6 +112,19 @@ function locationData($data)
     echo '<p><b>Dimension: </b>' . $data['dimension'] . '</p>';
     echo '</div>';
     echo '</article>';
+}
+
+/**
+ * Function to set the connection with the API
+ * @return string This variable contains the response of the API
+ */
+function setConectionAPI($url, $channel): string
+{
+    curl_setopt($channel, CURLOPT_URL, $url);
+    curl_setopt($channel, CURLOPT_RETURNTRANSFER, true);
+    $response = curl_exec($channel);
+    curl_close($channel);
+    return $response;
 }
 
 ?>
