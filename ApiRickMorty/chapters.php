@@ -26,6 +26,7 @@
 <?php
 /**
  * Function to print all the episodes
+ * @param $data | This variable contains all the data of the episodes
  * @return void Even though this function doesn't return anything, it prints the episodes with the echo's
  */
 function printAllEpisodes($data): void
@@ -73,6 +74,8 @@ function getAllEpisodes(): array
 
 /**
  * Function to set the connection with the API
+ * @param $url | This variable contains the url of the API
+ * @param $channel | This variable contains the channel of the API
  * @return string This variable contains the response of the API
  */
 function setConectionAPI($url, $channel): string

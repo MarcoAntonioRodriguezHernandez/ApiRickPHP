@@ -23,18 +23,6 @@ function getSingleCharacterById(): array
     return json_decode(setConectionAPI($url, $channel), true);
 }
 
-/**
- * Function to set the connection with the API
- * @return string This variable contains the response of the API
- */
-function setConectionAPI($url, $channel): string
-{
-    curl_setopt($channel, CURLOPT_URL, $url);
-    curl_setopt($channel, CURLOPT_RETURNTRANSFER, true);
-    $response = curl_exec($channel);
-    curl_close($channel);
-    return $response;
-}
 
 /**
  * Function that prints the data of a character
@@ -53,6 +41,20 @@ function printCharacterData($data): void
     echo '<p><b>Origen: </b>' . $data['origin']['name'] . '</p>';
     echo '</div>';
     echo '</article>';
+}
+/**
+ * Function to set the connection with the API
+ * @param $url | This variable contains the url of the API
+ * @param $channel | This variable contains the channel of the API
+ * @return string This variable contains the response of the API
+ */
+function setConectionAPI($url, $channel): string
+{
+    curl_setopt($channel, CURLOPT_URL, $url);
+    curl_setopt($channel, CURLOPT_RETURNTRANSFER, true);
+    $response = curl_exec($channel);
+    curl_close($channel);
+    return $response;
 }
 
 ?>

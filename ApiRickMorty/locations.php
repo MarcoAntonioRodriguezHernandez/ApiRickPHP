@@ -72,6 +72,8 @@ function getAllLocations(): array
 
 /**
  * Function to set the connection with the API
+ * @param $url | This variable contains the url of the API
+ * @param $channel | This variable contains the channel of the API
  * @return string This variable contains the response of the API
  */
 function setConectionAPI($url, $channel): string

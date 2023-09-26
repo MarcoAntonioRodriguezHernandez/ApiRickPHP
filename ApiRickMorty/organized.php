@@ -48,6 +48,7 @@ function getAllCharacters(): array
 
 /**
  * Function that gets the number of characters
+ * @param $data | This variable contains all the data of the characters
  * @return void Even though this function doesn't return anything, it prints the characters with the echo's
  */
 function printCharacters($data): void
@@ -67,6 +68,8 @@ function printCharacters($data): void
 
 /**
  * Function that oraganiizes the characters by species
+ * @param $characters | This variable contains all the data of the characters
+ * @param $species | This variable contains the species of the characters
  * @return array This variable contains all the data of the characters organized by species
  */
 function organizer($characters, $species): array
@@ -82,6 +85,8 @@ function organizer($characters, $species): array
 
 /**
  * Function to set the connection with the API
+ * @param $url | This variable contains the url of the API
+ * @param $channel | This variable contains the channel of the API
  * @return string This variable contains the response of the API
  */
 function setConectionAPI($url, $channel): string

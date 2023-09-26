@@ -67,6 +67,7 @@ function getAllCharacters($id): array
 
 /**
  * Function to get the ids of all the residents of the location in one string
+ * @param $data | This variable contains all the data of the residents of the location
  * @return string This string contains all the ids of the residents of the location
  */
 function getResidentsIds($data): string
@@ -81,6 +82,7 @@ function getResidentsIds($data): string
 
 /**
  * Function to print all the residents of the location
+ * @param $characters | This variable contains all the data of the characters from the location
  * @return void Even though this function doesn't return anything, it prints the residents with the echo's
  */
 function printResidents($characters): void
@@ -101,6 +103,7 @@ function printResidents($characters): void
 
 /**
  * Function to print the data of the location
+ * @param $data | This variable contains all the data of the location
  * @return void Even though this function doesn't return anything, it prints the data of the location with the echo's
  */
 function printLocationData($data): void
@@ -116,6 +119,8 @@ function printLocationData($data): void
 
 /**
  * Function to set the connection with the API
+ * @param $url | This variable contains the url of the API
+ * @param $channel | This variable contains the channel of the API
  * @return string This variable contains the response of the API
  */
 function setConectionAPI($url, $channel): string

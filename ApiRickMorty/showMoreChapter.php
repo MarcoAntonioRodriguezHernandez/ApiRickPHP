@@ -53,6 +53,7 @@ function getCharacterOfEpisode(): array
 
 /**
  * Function to get all the characters of the episode in only one query
+ * @param $id | This variable contains the id of the character
  * @return array This array contains all the data characters from the query
  */
 function getCharacters($id): array
@@ -64,6 +65,7 @@ function getCharacters($id): array
 
 /**
  * Function to get all the id's of the characters in one string
+ * @param $data | This variable contains all the data of the characters
  * @return string This string contains all the id's of the characters
  */
 function getCharactersId($data): string
@@ -78,6 +80,7 @@ function getCharactersId($data): string
 
 /**
  * Function to print all the characters of the episode
+ * @param $characters | This variable contains all the characters of the episode
  * @return void Even though this function doesn't return anything, it prints the characters of the episode with the echo's
  */
 function printAllCharacters($characters): void
@@ -98,6 +101,7 @@ function printAllCharacters($characters): void
 
 /**
  * Function to print the data of the episode
+ * @param $data | This variable contains all the data of the episode
  * @return void Even though this function doesn't return anything, it prints the data of the episode with the echo's
  */
 function printEpisodeData($data): void
@@ -113,6 +117,8 @@ function printEpisodeData($data): void
 
 /**
  * Function to set the connection with the API
+ * @param $url | This variable contains the url of the API
+ * @param $channel | This variable contains the channel of the API
  * @return string This variable contains the response of the API
  */
 function setConectionAPI($url, $channel): string
